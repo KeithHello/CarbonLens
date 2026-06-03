@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+data/
+scripts/
+*.md
+!README.md
+.gitignore
+.dockerignore
+Dockerfile
+.npm
+.cache

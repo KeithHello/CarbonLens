@@ -1,0 +1,4 @@
+google-adk>=2.0.0
+google-cloud-aiplatform[agent_engines]>=1.112.0
+python-dotenv>=1.0.0
+mcp>=1.0.0

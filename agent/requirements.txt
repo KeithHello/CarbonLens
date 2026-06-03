@@ -1,0 +1,9 @@
+# CarbonLens Agent — Python Dependencies
+# Install: pip install -r agent/requirements.txt
+
+google-adk>=2.0.0
+google-cloud-aiplatform>=1.60.0
+python-dotenv>=1.0.0
+
+# MCP client — required by ADK MCPToolset
+mcp>=1.0.0

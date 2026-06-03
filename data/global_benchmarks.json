@@ -1,0 +1,42 @@
+[
+  {
+    "country": "Global average",
+    "country_code": "GLOBAL",
+    "daily_kg_co2e": 6.8,
+    "annual_tonnes_co2e": 2.5,
+    "source": "Global Carbon Project 2025",
+    "year": 2025
+  },
+  {
+    "country": "Japan",
+    "country_code": "JP",
+    "daily_kg_co2e": 23.2,
+    "annual_tonnes_co2e": 8.5,
+    "source": "Japan Ministry of the Environment 2025",
+    "year": 2025
+  },
+  {
+    "country": "United States",
+    "country_code": "US",
+    "daily_kg_co2e": 42.5,
+    "annual_tonnes_co2e": 15.5,
+    "source": "EPA GHG Inventory 2025",
+    "year": 2025
+  },
+  {
+    "country": "China",
+    "country_code": "CN",
+    "daily_kg_co2e": 20.8,
+    "annual_tonnes_co2e": 7.6,
+    "source": "China Carbon Accounting Database",
+    "year": 2025
+  },
+  {
+    "country": "India",
+    "country_code": "IN",
+    "daily_kg_co2e": 5.2,
+    "annual_tonnes_co2e": 1.9,
+    "source": "Global Carbon Project 2025",
+    "year": 2025
+  }
+]

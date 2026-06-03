@@ -1,0 +1,39 @@
+{
+  "name": "carbonlens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CarbonLens — AI-powered carbon footprint tracking agent",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "setup:mongodb": "node scripts/setup-mongodb.js",
+    "reset:demo": "node scripts/reset-demo-data.js",
+    "reset:empty": "node scripts/reset-demo-data.js --empty",
+    "test": "npm run test:data && npm run test:mongodb && npm run test:agent",
+    "test:data": "node tests/data.test.js",
+    "test:mongodb": "node tests/mongodb.test.js",
+    "test:agent": "node tests/agent-platform.test.js",
+    "test:api": "node tests/api-smoke.test.js",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "google-auth-library": "^10.6.2",
+    "mongodb": "^7.2.0",
+    "next": "^14.2.29",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "autoprefixer": "^10.4.21",
+    "mongodb-mcp-server": "^1.11.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}

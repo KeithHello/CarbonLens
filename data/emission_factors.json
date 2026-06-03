@@ -1,0 +1,562 @@
+[
+  {
+    "activity": "gasoline_car_city",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.2,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "gasoline_car_highway",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.15,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "diesel_car_city",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.17,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "hybrid_car",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.1,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "ev_japan",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.07,
+    "source": "Japan Ministry of the Environment",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "ev_china",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.12,
+    "source": "China Carbon Accounting Database",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "ev_france",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.02,
+    "source": "IEA 2025",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "motorcycle",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.1,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "bus",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.08,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "subway",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.03,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "shinkansen",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.02,
+    "source": "JR East CSR Report",
+    "confidence": "High"
+  },
+  {
+    "activity": "flight_short_economy",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.25,
+    "source": "ICAO 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "flight_long_economy",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.15,
+    "source": "ICAO 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "flight_long_business",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0.38,
+    "source": "ICAO 2025",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "bicycle",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0,
+    "source": "—",
+    "confidence": "High"
+  },
+  {
+    "activity": "walking",
+    "category": "Transport",
+    "unit": "per km",
+    "factor_kg_co2e": 0,
+    "source": "—",
+    "confidence": "High"
+  },
+  {
+    "activity": "beef",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 27,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "lamb",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 24,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "pork",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 12.1,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "chicken",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 6.9,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "salmon_farmed",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 5,
+    "source": "Science 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "eggs",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 4.5,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "milk",
+    "category": "Food",
+    "unit": "per L",
+    "factor_kg_co2e": 3.2,
+    "source": "FAO 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "cheese",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 23.9,
+    "source": "FAO 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "rice",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 4,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "wheat_bread",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 1.4,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "tofu",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 2,
+    "source": "Science 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "local_vegetables",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 0.5,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "import_vegetables_air",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 5,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "coffee",
+    "category": "Food",
+    "unit": "per cup",
+    "factor_kg_co2e": 0.4,
+    "source": "Science 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "chocolate",
+    "category": "Food",
+    "unit": "per kg",
+    "factor_kg_co2e": 19,
+    "source": "Science 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "instant_noodles",
+    "category": "Food",
+    "unit": "per serving",
+    "factor_kg_co2e": 1.2,
+    "source": "FAO 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "takeout_container",
+    "category": "Food",
+    "unit": "per serving",
+    "factor_kg_co2e": 0.3,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "electricity_japan",
+    "category": "Energy",
+    "unit": "per kWh",
+    "factor_kg_co2e": 0.457,
+    "source": "Japan Ministry of the Environment 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "electricity_us",
+    "category": "Energy",
+    "unit": "per kWh",
+    "factor_kg_co2e": 0.385,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "electricity_china",
+    "category": "Energy",
+    "unit": "per kWh",
+    "factor_kg_co2e": 0.57,
+    "source": "China Carbon Accounting Database",
+    "confidence": "High"
+  },
+  {
+    "activity": "electricity_france",
+    "category": "Energy",
+    "unit": "per kWh",
+    "factor_kg_co2e": 0.055,
+    "source": "IEA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "natural_gas_heating",
+    "category": "Energy",
+    "unit": "per m³",
+    "factor_kg_co2e": 2.21,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "ac_cooling",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.69,
+    "source": "Calculated value (Japan grid)",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "ac_heating",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.91,
+    "source": "Calculated value (Japan grid)",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "led_light",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.005,
+    "source": "Calculated value (Japan grid)",
+    "confidence": "High"
+  },
+  {
+    "activity": "incandescent_light",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.027,
+    "source": "Calculated value (Japan grid)",
+    "confidence": "High"
+  },
+  {
+    "activity": "tv",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.046,
+    "source": "Calculated value (Japan grid)",
+    "confidence": "High"
+  },
+  {
+    "activity": "desktop_pc",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.09,
+    "source": "Calculated value (200W x Japan grid)",
+    "confidence": "High"
+  },
+  {
+    "activity": "laptop",
+    "category": "Energy",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.02,
+    "source": "Calculated value (45W x Japan grid)",
+    "confidence": "High"
+  },
+  {
+    "activity": "washing_machine",
+    "category": "Energy",
+    "unit": "per use",
+    "factor_kg_co2e": 0.5,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "dryer",
+    "category": "Energy",
+    "unit": "per use",
+    "factor_kg_co2e": 2,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "shower_10min",
+    "category": "Energy",
+    "unit": "per use",
+    "factor_kg_co2e": 1.5,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "bath",
+    "category": "Energy",
+    "unit": "per use",
+    "factor_kg_co2e": 3,
+    "source": "Calculated value (natural gas heating 200L)",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "cotton_tshirt_fast",
+    "category": "Consumer Goods",
+    "unit": "per piece",
+    "factor_kg_co2e": 7,
+    "source": "Ellen MacArthur Foundation",
+    "confidence": "High"
+  },
+  {
+    "activity": "cotton_tshirt_organic",
+    "category": "Consumer Goods",
+    "unit": "per piece",
+    "factor_kg_co2e": 3.5,
+    "source": "Textile Exchange 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "jeans",
+    "category": "Consumer Goods",
+    "unit": "per pair",
+    "factor_kg_co2e": 33.4,
+    "source": "Levi's LCA 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "sneakers",
+    "category": "Consumer Goods",
+    "unit": "per pair",
+    "factor_kg_co2e": 14,
+    "source": "MIT SCM 2024",
+    "confidence": "High"
+  },
+  {
+    "activity": "smartphone",
+    "category": "Consumer Goods",
+    "unit": "per device",
+    "factor_kg_co2e": 80,
+    "source": "Apple Environmental Report 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "laptop_device",
+    "category": "Consumer Goods",
+    "unit": "per device",
+    "factor_kg_co2e": 300,
+    "source": "Apple/Dell LCA",
+    "confidence": "High"
+  },
+  {
+    "activity": "paper_book",
+    "category": "Consumer Goods",
+    "unit": "per book",
+    "factor_kg_co2e": 2.5,
+    "source": "Publishing industry LCA",
+    "confidence": "High"
+  },
+  {
+    "activity": "ereader",
+    "category": "Consumer Goods",
+    "unit": "per device",
+    "factor_kg_co2e": 42,
+    "source": "Amazon Device LCA",
+    "confidence": "High"
+  },
+  {
+    "activity": "mixed_landfill",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": 0.58,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "food_waste_landfill",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": 2.5,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "food_compost",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": 0.05,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "plastic_bottle_landfill",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": 0.03,
+    "source": "IPCC AR7",
+    "confidence": "High"
+  },
+  {
+    "activity": "plastic_bottle_recycle",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": -1.5,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "aluminum_recycle",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": -8,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "paper_recycle",
+    "category": "Waste",
+    "unit": "per kg",
+    "factor_kg_co2e": -0.6,
+    "source": "EPA 2025",
+    "confidence": "High"
+  },
+  {
+    "activity": "video_streaming_hd",
+    "category": "Services & Digital Life",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.055,
+    "source": "IEA digital services estimate",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "video_call",
+    "category": "Services & Digital Life",
+    "unit": "per hour",
+    "factor_kg_co2e": 0.035,
+    "source": "IEA digital services estimate",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "cloud_storage_100gb_month",
+    "category": "Services & Digital Life",
+    "unit": "per month",
+    "factor_kg_co2e": 0.2,
+    "source": "Cloud data center estimate",
+    "confidence": "Low"
+  },
+  {
+    "activity": "online_shopping_delivery",
+    "category": "Services & Digital Life",
+    "unit": "per delivery",
+    "factor_kg_co2e": 0.6,
+    "source": "Logistics LCA estimate",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "hotel_stay",
+    "category": "Services & Digital Life",
+    "unit": "per night",
+    "factor_kg_co2e": 12,
+    "source": "Hospitality LCA estimate",
+    "confidence": "Medium"
+  },
+  {
+    "activity": "restaurant_meal_service",
+    "category": "Services & Digital Life",
+    "unit": "per meal",
+    "factor_kg_co2e": 0.8,
+    "source": "Service overhead estimate",
+    "confidence": "Low"
+  }
+]
