@@ -40,7 +40,11 @@ function getMongoUri(): string {
     throw new Error("MongoDB connection string is not configured.");
   }
 
-  return toDirectAtlasUri(uri);
+  return shouldUseDirectAtlasUri() ? toDirectAtlasUri(uri) : uri;
+}
+
+function shouldUseDirectAtlasUri(): boolean {
+  return process.env.MONGODB_USE_DIRECT_ATLAS_URI === "true";
 }
 
 function toDirectAtlasUri(uri: string): string {
