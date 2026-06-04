@@ -10,6 +10,31 @@ const nextConfig = {
   images: {
     domains: [],
   },
+
+  async redirects() {
+    return [
+      {
+        source: "/input",
+        destination: "/record",
+        permanent: false,
+      },
+      {
+        source: "/history",
+        destination: "/insights",
+        permanent: false,
+      },
+      {
+        source: "/advice",
+        destination: "/discovery-hub",
+        permanent: false,
+      },
+      {
+        source: "/settings",
+        destination: "/profile",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

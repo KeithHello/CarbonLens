@@ -15,7 +15,7 @@ export default function VoicePage() {
   }, []);
 
   const handleNavigateToInput = useCallback(() => {
-    router.push("/input");
+    router.push("/record");
   }, [router]);
 
   const handleCalculate = useCallback(async () => {

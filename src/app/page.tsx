@@ -53,10 +53,10 @@ export default function HomePage() {
             carbon reports and practical reduction guidance.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/input" className="btn-primary text-center">
+            <Link href="/record" className="btn-primary text-center">
               Start recording
             </Link>
-            <Link href="/history" className="btn-outline text-center">
+            <Link href="/insights" className="btn-outline text-center">
               View demo history
             </Link>
           </div>
@@ -112,7 +112,7 @@ export default function HomePage() {
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link href="/input" className="btn-primary inline-block">
+          <Link href="/record" className="btn-primary inline-block">
             Try CarbonLens
           </Link>
         </div>

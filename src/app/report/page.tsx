@@ -310,7 +310,7 @@ function ReportContent() {
           return;
         }
         if (result.reportDeleted || !result.data) {
-          router.push("/history");
+          router.push("/insights");
           return;
         }
         setReport(result.data);
@@ -342,7 +342,7 @@ function ReportContent() {
         setError(result.error || "Failed to delete report.");
         return;
       }
-      router.push("/history");
+      router.push("/insights");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete report.");
     } finally {
@@ -359,7 +359,7 @@ function ReportContent() {
           <div className="card p-8 text-center">
             <h1 className="text-xl font-semibold text-gray-950">Report unavailable</h1>
             <p className="mt-2 text-gray-600">{error || "This record could not be found."}</p>
-            <button onClick={() => router.push("/history")} className="btn-primary mt-6">
+            <button onClick={() => router.push("/insights")} className="btn-primary mt-6">
               Back to history
             </button>
           </div>
@@ -460,10 +460,10 @@ function ReportContent() {
         )}
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <button onClick={() => router.push("/input")} className="btn-primary">
+          <button onClick={() => router.push("/record")} className="btn-primary">
             Record another entry
           </button>
-          <button onClick={() => router.push("/history")} className="btn-outline">
+          <button onClick={() => router.push("/insights")} className="btn-outline">
             View history
           </button>
           <button

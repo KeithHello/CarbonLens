@@ -318,7 +318,7 @@ export default function InputPage() {
                 </>
               )}
             </div>
-            <Link href="/advice" className="btn-outline shrink-0 px-3 py-2 text-sm">
+            <Link href="/discovery-hub" className="btn-outline shrink-0 px-3 py-2 text-sm">
               {activeAdvice ? "Change plan" : "Open Hub"}
             </Link>
           </div>

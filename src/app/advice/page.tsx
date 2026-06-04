@@ -175,7 +175,7 @@ export default function AdvicePage() {
                   Selected {formatDate(activePlan.selected_at)}
                 </p>
               </div>
-              <Link href="/input" className="btn-primary px-4 py-2 text-sm">
+              <Link href="/record" className="btn-primary px-4 py-2 text-sm">
                 Record with this plan
               </Link>
             </div>

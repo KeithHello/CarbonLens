@@ -172,7 +172,7 @@ export default function SettingsPage() {
               No active plan yet. Choose one in Discovery Hub.
             </p>
           )}
-          <Link href="/advice" className="btn-outline mt-4 inline-block px-4 py-2 text-sm">
+          <Link href="/discovery-hub" className="btn-outline mt-4 inline-block px-4 py-2 text-sm">
             Open Discovery Hub
           </Link>
         </section>

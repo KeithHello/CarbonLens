@@ -220,7 +220,7 @@ export default function HistoryPage() {
             <button onClick={fetchHistory} className="btn-outline px-4 py-2 text-sm">
               Refresh
             </button>
-            <Link href="/input" className="btn-primary px-4 py-2 text-sm">
+            <Link href="/record" className="btn-primary px-4 py-2 text-sm">
               New entry
             </Link>
           </div>
@@ -283,7 +283,7 @@ export default function HistoryPage() {
             <p className="mt-2 text-gray-600">
               Finished calculations will be saved here automatically.
             </p>
-            <Link href="/input" className="btn-primary mt-6 inline-block">
+            <Link href="/record" className="btn-primary mt-6 inline-block">
               Start recording
             </Link>
           </div>

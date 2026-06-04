@@ -27,17 +27,17 @@ export const viewport: Viewport = {
 
 function NavBar() {
   const navItems = [
-    { href: "/input", label: "Record" },
-    { href: "/history", label: "Insights" },
-    { href: "/advice", label: "Discovery Hub" },
-    { href: "/settings", label: "Profile" },
+    { href: "/record", label: "Record" },
+    { href: "/insights", label: "Insights" },
+    { href: "/discovery-hub", label: "Discovery Hub" },
+    { href: "/profile", label: "Profile" },
   ];
 
   return (
     <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link
-          href="/input"
+          href="/record"
           className="flex min-w-0 items-center gap-2 text-base font-bold text-primary transition-colors hover:text-primary-700 sm:text-lg"
         >
           <span>🌍</span>
