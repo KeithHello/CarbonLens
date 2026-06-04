@@ -209,7 +209,7 @@ export default function HistoryPage() {
         <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">
-              Carbon Footprint History
+              Carbon Insights
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Latest {reports.length} records
@@ -284,7 +284,7 @@ export default function HistoryPage() {
               Finished calculations will be saved here automatically.
             </p>
             <Link href="/input" className="btn-primary mt-6 inline-block">
-              Start logging
+              Start recording
             </Link>
           </div>
         ) : (

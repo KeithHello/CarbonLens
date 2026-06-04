@@ -48,6 +48,23 @@ export interface Suggestion {
   category: string;
 }
 
+export interface AdvicePlan {
+  id: string;
+  rank: number;
+  title: string;
+  summary: string;
+  primary_driver: string;
+  evidence: string;
+  short_term_action: string;
+  mid_term_action: string;
+  long_term_action: string;
+  estimated_reduction_kg: number;
+  difficulty: "easy" | "medium" | "hard";
+  user_edited?: boolean;
+  selected_at?: string;
+  updated_at?: string;
+}
+
 export interface CarbonReport {
   total_co2e_kg: number;
   breakdown: EmissionBreakdown[];

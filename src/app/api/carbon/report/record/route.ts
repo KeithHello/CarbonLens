@@ -8,6 +8,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteActivityRecordById } from "@/lib/mongodb";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);

@@ -9,6 +9,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { calculateCarbon } from "@/lib/agent-client";
 import { saveCarbonReport } from "@/lib/mongodb";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const startedAt = Date.now();
 

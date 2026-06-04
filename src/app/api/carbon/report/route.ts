@@ -12,6 +12,9 @@ import {
   getCarbonReportBySession,
 } from "@/lib/mongodb";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 function readParams(request: NextRequest): { sessionId: string | null; userId: string } {
   const { searchParams } = new URL(request.url);
   return {

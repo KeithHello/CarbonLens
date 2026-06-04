@@ -3,7 +3,7 @@ import Link from "next/link";
 const FEATURES = [
   {
     icon: "🗣️",
-    title: "Natural Activity Logging",
+    title: "Natural Activity Recording",
     desc: "Describe daily activity in plain English with text or voice. CarbonLens turns it into structured carbon records.",
   },
   {
@@ -21,7 +21,7 @@ const FEATURES = [
 const STEPS = [
   {
     step: "1",
-    title: "Log by text or voice",
+    title: "Record by text or voice",
     desc: "Write or say what you did today.",
   },
   {
@@ -49,12 +49,12 @@ export default function HomePage() {
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             CarbonLens uses a multi-agent ADK workflow, MongoDB emission factors,
-            and Gemini Flash to turn natural language activity logs into clear
+            and Gemini Flash to turn natural language activity records into clear
             carbon reports and practical reduction guidance.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/input" className="btn-primary text-center">
-              Start logging
+              Start recording
             </Link>
             <Link href="/history" className="btn-outline text-center">
               View demo history

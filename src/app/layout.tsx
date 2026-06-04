@@ -27,9 +27,10 @@ export const viewport: Viewport = {
 
 function NavBar() {
   const navItems = [
-    { href: "/input", label: "Log" },
-    { href: "/history", label: "History" },
-    { href: "/settings", label: "Settings" },
+    { href: "/input", label: "Record" },
+    { href: "/history", label: "Insights" },
+    { href: "/advice", label: "Discovery Hub" },
+    { href: "/settings", label: "Profile" },
   ];
 
   return (

@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { loadActiveAdvicePlan } from "@/lib/advice";
+import type { AdvicePlan } from "@/lib/types";
 
 interface UserSettings {
   country: string;
@@ -93,11 +96,13 @@ function formatFeedbackDate(value: string): string {
 export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
   const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
+  const [activeAdvice, setActiveAdvice] = useState<AdvicePlan | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     setSettings(loadSettings());
     setFeedback(loadFeedback());
+    setActiveAdvice(loadActiveAdvicePlan());
   }, []);
 
   const stats = useMemo(() => {
@@ -142,9 +147,9 @@ export default function SettingsPage() {
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white pb-16">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="mb-7">
-          <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">Profile</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Tune your preferences and review the reduction suggestions you adopted.
+            Tune your preferences and review the reduction plan you selected.
           </p>
           {isSaved && (
             <span className="mt-3 inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
@@ -152,6 +157,25 @@ export default function SettingsPage() {
             </span>
           )}
         </header>
+
+        <section className="card mb-6 p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-gray-900">Selected Reduction Plan</h2>
+          {activeAdvice ? (
+            <div className="mt-4 rounded-xl border border-green-100 bg-green-50 p-4">
+              <p className="text-sm font-semibold text-gray-950">{activeAdvice.title}</p>
+              <p className="mt-1 text-sm leading-6 text-green-800">
+                {activeAdvice.short_term_action}
+              </p>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-gray-500">
+              No active plan yet. Choose one in Discovery Hub.
+            </p>
+          )}
+          <Link href="/advice" className="btn-outline mt-4 inline-block px-4 py-2 text-sm">
+            Open Discovery Hub
+          </Link>
+        </section>
 
         <section className="card mb-6 p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-gray-900">Country</h2>

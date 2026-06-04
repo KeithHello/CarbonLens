@@ -461,7 +461,7 @@ function ReportContent() {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button onClick={() => router.push("/input")} className="btn-primary">
-            Log another entry
+            Record another entry
           </button>
           <button onClick={() => router.push("/history")} className="btn-outline">
             View history

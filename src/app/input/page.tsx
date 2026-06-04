@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { loadActiveAdvicePlan } from "@/lib/advice";
+import type { AdvicePlan } from "@/lib/types";
 
 interface RecentEntry {
   text: string;
@@ -100,11 +103,21 @@ export default function InputPage() {
   const [voiceStatus, setVoiceStatus] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [activeAdvice, setActiveAdvice] = useState<AdvicePlan | null>(null);
 
   const speechSupported = useMemo(() => Boolean(getSpeechRecognitionConstructor()), []);
 
   useEffect(() => {
     setRecentEntries(loadRecentEntries());
+    setActiveAdvice(loadActiveAdvicePlan());
+
+    const refreshAdvice = () => setActiveAdvice(loadActiveAdvicePlan());
+    window.addEventListener("storage", refreshAdvice);
+    window.addEventListener("carbonlens-active-advice-updated", refreshAdvice);
+    return () => {
+      window.removeEventListener("storage", refreshAdvice);
+      window.removeEventListener("carbonlens-active-advice-updated", refreshAdvice);
+    };
   }, []);
 
   useEffect(() => {
@@ -275,9 +288,41 @@ export default function InputPage() {
             🌍 What did you do today?
           </h1>
           <p className="mt-2 text-sm text-gray-600 sm:text-lg">
-            Log activities with text or voice. AI calculates and saves your carbon footprint.
+            Record activities with text or voice. AI calculates and saves your carbon footprint.
           </p>
         </header>
+
+        <section className="mb-5 rounded-xl border border-green-200 bg-white p-4 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-green-700">
+                Active reduction plan
+              </p>
+              {activeAdvice ? (
+                <>
+                  <h2 className="mt-2 text-base font-semibold text-gray-950">
+                    {activeAdvice.title}
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    {activeAdvice.short_term_action}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="mt-2 text-base font-semibold text-gray-950">
+                    Choose a 30-day plan
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    Discovery Hub will generate five plans from your recent records.
+                  </p>
+                </>
+              )}
+            </div>
+            <Link href="/advice" className="btn-outline shrink-0 px-3 py-2 text-sm">
+              {activeAdvice ? "Change plan" : "Open Hub"}
+            </Link>
+          </div>
+        </section>
 
         <section className="mb-5">
           <p className="mb-2 text-sm font-medium text-gray-500">You can describe activities like:</p>
