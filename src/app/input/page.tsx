@@ -60,6 +60,10 @@ const CATEGORIES = [
   { icon: "💻", label: "Services & Digital Life", hint: "video, cloud, hotel" },
 ];
 
+function displayCategoryLabel(label: string): string {
+  return label === "Services & Digital Life" ? "Digital Life" : label;
+}
+
 function loadRecentEntries(): RecentEntry[] {
   if (typeof window === "undefined") return [];
   try {
@@ -337,7 +341,7 @@ export default function InputPage() {
                 </span>
                 <span className="min-w-0">
                   <span className="block text-sm font-semibold leading-5 text-gray-900">
-                    {category.label}
+                    {displayCategoryLabel(category.label)}
                   </span>
                   <span className="block truncate text-xs leading-4 text-gray-400">
                     {category.hint}
