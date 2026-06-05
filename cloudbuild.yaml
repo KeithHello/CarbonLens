@@ -20,6 +20,9 @@ steps:
       - '--min-instances=0'
       - '--max-instances=3'
       - '--allow-unauthenticated'
+      - '--network=carbonlens-egress-vpc'
+      - '--subnet=carbonlens-egress-subnet'
+      - '--vpc-egress=all-traffic'
       - '--update-env-vars=NODE_ENV=production'
 
 images:
