@@ -25,10 +25,75 @@ interface SpeechRecognition extends EventTarget {
   onstart: (() => void) | null;
 }
 
+type MicrophonePermissionStatus = {
+  ok: boolean;
+  message?: string;
+};
+
 declare global {
   interface Window {
     SpeechRecognition: new () => SpeechRecognition;
     webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
+
+async function requestMicrophoneAccess(): Promise<MicrophonePermissionStatus> {
+  if (typeof navigator === "undefined") return { ok: true };
+
+  const permissionNavigator = navigator as Navigator & {
+    permissions?: {
+      query: (descriptor: { name: string }) => Promise<{ state: PermissionState }>;
+    };
+  };
+
+  try {
+    const permission = await permissionNavigator.permissions?.query({
+      name: "microphone",
+    });
+    if (permission?.state === "denied") {
+      return {
+        ok: false,
+        message:
+          "Microphone access is blocked. Please enable microphone permission from the browser address bar or site settings, then try again.",
+      };
+    }
+  } catch {
+    // Browser may not support microphone permission queries.
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return {
+      ok: false,
+      message:
+        "Microphone access is unavailable in this browser or connection. Please use Chrome or Edge over HTTPS, or use text input.",
+    };
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((track) => track.stop());
+    return { ok: true };
+  } catch (err) {
+    const name = err instanceof DOMException ? err.name : "";
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      return {
+        ok: false,
+        message:
+          "Microphone permission was denied. Please allow microphone access in your browser or system privacy settings, then tap the microphone again.",
+      };
+    }
+    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+      return {
+        ok: false,
+        message:
+          "No microphone was found. Please connect or enable a microphone, then try again.",
+      };
+    }
+    return {
+      ok: false,
+      message:
+        "Could not check the microphone. Please confirm microphone permission and try again.",
+    };
   }
 }
 
@@ -60,6 +125,7 @@ export default function VoiceRecorder({
   const [tags, setTags] = useState<{ emoji: string; label: string }[]>([]);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -102,7 +168,7 @@ export default function VoiceRecorder({
     }, 10000);
   }, []);
 
-  const startRecording = useCallback(() => {
+  const startRecording = useCallback(async () => {
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
       setIsSupported(false);
@@ -115,6 +181,21 @@ export default function VoiceRecorder({
     setTags([]);
     setTimer(0);
     fullTranscriptRef.current = "";
+    setPermissionDenied(false);
+    setIsProcessing(true);
+    setStatusMessage("Checking microphone permission...");
+
+    const microphone = await requestMicrophoneAccess();
+    if (!microphone.ok) {
+      setPermissionDenied(true);
+      setError(microphone.message || "Please enable microphone permission and try again.");
+      setStatusMessage("Microphone permission is required to record voice.");
+      setIsProcessing(false);
+      setIsRecording(false);
+      return;
+    }
+
+    setStatusMessage("Microphone is ready. Starting recording...");
     setIsRecording(true);
 
     const recognition = new SpeechRec();
@@ -126,6 +207,7 @@ export default function VoiceRecorder({
     recognition.onstart = () => {
       setIsRecording(true);
       setIsProcessing(false);
+      setStatusMessage(null);
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
@@ -153,7 +235,12 @@ export default function VoiceRecorder({
     recognition.onerror = (event: SpeechRecognitionError) => {
       if (event.error === "not-allowed" || event.error === "permission-denied") {
         setPermissionDenied(true);
+        setError(
+          "Microphone access is blocked. Please allow microphone permission in your browser or system settings, then try again.",
+        );
+        setStatusMessage("Microphone permission is required to record voice.");
         setIsRecording(false);
+        setIsProcessing(false);
         return;
       }
       if (event.error === "no-speech" || event.error === "aborted") {
@@ -165,6 +252,7 @@ export default function VoiceRecorder({
     recognition.onend = () => {
       setIsRecording(false);
       setIsProcessing(false);
+      setStatusMessage(null);
       setInterimTranscript("");
       if (timerRef.current) clearInterval(timerRef.current);
       if (fullTranscriptRef.current) {
@@ -180,7 +268,9 @@ export default function VoiceRecorder({
       resetSilenceTimer();
     } catch {
       setError("Speech recognition could not start.");
+      setStatusMessage(null);
       setIsRecording(false);
+      setIsProcessing(false);
     }
   }, [publishTranscript, resetSilenceTimer]);
 
@@ -230,7 +320,8 @@ export default function VoiceRecorder({
         <div className="mb-4 text-5xl">🎤</div>
         <h2 className="text-lg font-semibold text-gray-900">Microphone access is blocked</h2>
         <p className="mt-2 text-sm text-gray-600">
-          Allow microphone permission in your browser, or use text input instead.
+          {error ||
+            "Allow microphone permission from the browser address bar or site settings, then try again."}
         </p>
         <button onClick={onNavigateToInput} className="btn-primary mt-6 inline-block">
           Use text input
@@ -279,6 +370,9 @@ export default function VoiceRecorder({
           </p>
         ) : (
           <p className="text-sm text-gray-500">Tap to start recording</p>
+        )}
+        {statusMessage && (
+          <p className="mt-2 text-xs font-medium text-primary">{statusMessage}</p>
         )}
       </div>
 

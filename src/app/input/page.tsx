@@ -34,6 +34,11 @@ type BrowserSpeechRecognition = EventTarget & {
 
 type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
 
+type MicrophonePermissionStatus = {
+  ok: boolean;
+  message?: string;
+};
+
 function getSpeechRecognitionConstructor(): BrowserSpeechRecognitionConstructor | undefined {
   if (typeof window === "undefined") return undefined;
   const speechWindow = window as Window & {
@@ -41,6 +46,66 @@ function getSpeechRecognitionConstructor(): BrowserSpeechRecognitionConstructor 
     webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
   };
   return speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+}
+
+async function requestMicrophoneAccess(): Promise<MicrophonePermissionStatus> {
+  if (typeof navigator === "undefined") return { ok: true };
+
+  const permissionNavigator = navigator as Navigator & {
+    permissions?: {
+      query: (descriptor: { name: string }) => Promise<{ state: PermissionState }>;
+    };
+  };
+
+  try {
+    const permission = await permissionNavigator.permissions?.query({
+      name: "microphone",
+    });
+    if (permission?.state === "denied") {
+      return {
+        ok: false,
+        message:
+          "Microphone access is blocked. Please enable microphone permission from the browser address bar or site settings, then try again.",
+      };
+    }
+  } catch {
+    // Some browsers do not support querying microphone permission directly.
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return {
+      ok: false,
+      message:
+        "Microphone access is unavailable in this browser or connection. Please use Chrome or Edge over HTTPS, or use text input.",
+    };
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((track) => track.stop());
+    return { ok: true };
+  } catch (err) {
+    const name = err instanceof DOMException ? err.name : "";
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      return {
+        ok: false,
+        message:
+          "Microphone permission was denied. Please allow microphone access in your browser or system privacy settings, then tap the microphone again.",
+      };
+    }
+    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+      return {
+        ok: false,
+        message:
+          "No microphone was found. Please connect or enable a microphone, then try again.",
+      };
+    }
+    return {
+      ok: false,
+      message:
+        "Could not check the microphone. Please confirm microphone permission and try again.",
+    };
+  }
 }
 
 const EXAMPLES = [
@@ -152,7 +217,7 @@ export default function InputPage() {
     recognitionRef.current?.stop();
   }, []);
 
-  const startVoice = useCallback(() => {
+  const startVoice = useCallback(async () => {
     if (!speechSupported || isLoading) {
       setError("This browser does not support speech recognition. Please use Chrome or Edge.");
       return;
@@ -165,7 +230,16 @@ export default function InputPage() {
     transcriptRef.current = "";
     manuallyStoppingRef.current = false;
     setError(null);
-    setVoiceStatus("Recording. Tap the microphone again to stop.");
+    setVoiceStatus("Checking microphone permission...");
+
+    const microphone = await requestMicrophoneAccess();
+    if (!microphone.ok) {
+      setError(microphone.message || "Please enable microphone permission and try again.");
+      setVoiceStatus("Microphone permission is required to use voice input.");
+      return;
+    }
+
+    setVoiceStatus("Microphone is ready. Starting recording...");
 
     const recognition = new Recognition();
     recognition.lang = "en-US";
