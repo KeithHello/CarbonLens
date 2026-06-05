@@ -28,7 +28,7 @@ export default function VoicePage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/carbon/calculate", {
+      const response = await fetch("/api/record", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ input: transcript, userId: "default" }),

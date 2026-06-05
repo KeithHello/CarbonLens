@@ -280,7 +280,7 @@ export async function listCarbonReports(
       { projection: { _id: 0 } },
     )
     .sort({ timestamp: -1 })
-    .limit(Math.min(days, 365))
+    .limit(Math.min(days * 20, 1000))
     .toArray();
 
   return docs as unknown as CarbonReport[];

@@ -13,6 +13,29 @@ function round(value: number, digits = 1): number {
   return Math.round(value * factor) / factor;
 }
 
+function impactFromText(text: string, fallback: number): number {
+  const lower = text.toLowerCase();
+  const categorySignals = [
+    { pattern: /flight|fly|plane|air travel|airport/, value: 8 },
+    { pattern: /beef|steak|meat-heavy|high-carbon meal/, value: 2.6 },
+    { pattern: /drive|driving|car|taxi|commute|carpool/, value: 2 },
+    { pattern: /ac|air conditioning|heating|heater|bath|hot-water|laundry|dryer/, value: 1.4 },
+    { pattern: /delivery|hotel|stream|streaming|cloud storage|digital/, value: 1 },
+    { pattern: /waste|recycling|recycle|compost/, value: 0.7 },
+    { pattern: /purchase|clothing|electronics|second-hand|repair|reuse/, value: 0.9 },
+  ];
+  const signal = categorySignals.find((item) => item.pattern.test(lower));
+  let estimate = signal?.value ?? fallback;
+
+  if (/every day|daily|default|routine|habit/.test(lower)) estimate *= 1.2;
+  if (/weekly|once per week|one day|one meal|one trip/.test(lower)) estimate *= 0.75;
+  if (/avoid|eliminate|replace|switch|shift/.test(lower)) estimate *= 1.1;
+  if (/adjust|shorten|reduce|combine|batch/.test(lower)) estimate *= 0.9;
+  if (/long-term|monthly|seasonal|infrastructure/.test(lower)) estimate *= 1.05;
+
+  return round(Math.min(25, Math.max(0.3, estimate)), 1);
+}
+
 function categoryTotals(reports: CarbonReport[]): DriverStats[] {
   const totals = new Map<string, number>();
   let grandTotal = 0;
@@ -232,6 +255,27 @@ export function generateAdvicePlans(reports: CarbonReport[]): AdvicePlan[] {
 
   const withGeneric = [...plans, ...genericPlans(normalizedReports, plans.length)];
   return withGeneric.slice(0, 5).map((plan, index) => ({ ...plan, rank: index + 1 }));
+}
+
+export function estimatePlanReductionKg(
+  plan: Pick<
+    AdvicePlan,
+    | "title"
+    | "summary"
+    | "short_term_action"
+    | "mid_term_action"
+    | "long_term_action"
+    | "estimated_reduction_kg"
+  >,
+): number {
+  const text = [
+    plan.title,
+    plan.summary,
+    plan.short_term_action,
+    plan.mid_term_action,
+    plan.long_term_action,
+  ].join(" ");
+  return impactFromText(text, plan.estimated_reduction_kg);
 }
 
 export function loadActiveAdvicePlan(): AdvicePlan | null {

@@ -19,6 +19,31 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 type ViewMode = "chart" | "list";
 type RangeMode = 7 | 30;
 
+interface DailyCarbonSummary {
+  dayKey: string;
+  timestamp: string;
+  reports: CarbonReport[];
+  total_co2e_kg: number;
+  national_avg_kg: number;
+  categories: DailyCategorySummary[];
+}
+
+interface DailyCategorySummary {
+  category: string;
+  kg_co2e: number;
+  percentage: number;
+}
+
+function dayKey(value: string): string {
+  const parts = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date(value));
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -34,19 +59,19 @@ function formatShortDate(value: string): string {
   }).format(new Date(value));
 }
 
-function nationalAverage(report: CarbonReport): number {
-  return report.comparison?.national_avg_kg || 10;
+function nationalAverage(summary: DailyCarbonSummary): number {
+  return summary.national_avg_kg || 10;
 }
 
-function colorForReport(report: CarbonReport): {
+function colorForSummary(summary: DailyCarbonSummary): {
   bar: string;
   bg: string;
   border: string;
   text: string;
   label: string;
 } {
-  const average = nationalAverage(report);
-  const ratio = average > 0 ? report.total_co2e_kg / average : 1;
+  const average = nationalAverage(summary);
+  const ratio = average > 0 ? summary.total_co2e_kg / average : 1;
 
   if (ratio <= 1) {
     if (ratio <= 0.35) {
@@ -103,15 +128,57 @@ function colorForReport(report: CarbonReport): {
   };
 }
 
-function buildChartData(reports: CarbonReport[]): ChartData<"bar"> {
-  const chronological = [...reports].reverse();
+function buildDailySummaries(reports: CarbonReport[]): DailyCarbonSummary[] {
+  const groups = new Map<string, CarbonReport[]>();
+  for (const report of reports) {
+    const key = dayKey(report.timestamp);
+    groups.set(key, [...(groups.get(key) ?? []), report]);
+  }
+
+  return Array.from(groups.entries())
+    .map(([key, groupedReports]) => {
+      const sorted = [...groupedReports].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      );
+      const total = sorted.reduce((sum, report) => sum + report.total_co2e_kg, 0);
+      const byCategory = new Map<string, number>();
+      for (const report of sorted) {
+        for (const item of report.breakdown ?? []) {
+          byCategory.set(item.category, (byCategory.get(item.category) ?? 0) + item.kg_co2e);
+        }
+      }
+      const categories = Array.from(byCategory.entries())
+        .map(([category, kg]) => ({
+          category,
+          kg_co2e: kg,
+          percentage: total > 0 ? (kg / total) * 100 : 0,
+        }))
+        .sort((a, b) => b.kg_co2e - a.kg_co2e);
+      const nationalAverageTotal = sorted.reduce(
+        (sum, report) => sum + (report.comparison?.national_avg_kg || 10),
+        0,
+      );
+      return {
+        dayKey: key,
+        timestamp: sorted[0].timestamp,
+        reports: sorted,
+        total_co2e_kg: total,
+        national_avg_kg: nationalAverageTotal / Math.max(1, sorted.length),
+        categories,
+      };
+    })
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+}
+
+function buildChartData(summaries: DailyCarbonSummary[]): ChartData<"bar"> {
+  const chronological = [...summaries].reverse();
   return {
-    labels: chronological.map((report) => formatShortDate(report.timestamp)),
+    labels: chronological.map((summary) => formatShortDate(summary.timestamp)),
     datasets: [
       {
         label: "kg CO2e",
-        data: chronological.map((report) => report.total_co2e_kg),
-        backgroundColor: chronological.map((report) => colorForReport(report).bar),
+        data: chronological.map((summary) => summary.total_co2e_kg),
+        backgroundColor: chronological.map((summary) => colorForSummary(summary).bar),
         borderRadius: 8,
         borderSkipped: false,
       },
@@ -158,7 +225,7 @@ export default function HistoryPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/carbon/history?userId=default&days=365");
+      const response = await fetch("/api/insights?userId=default&days=365");
       const result = await response.json();
       if (!result.success) {
         setError(result.error || "Failed to load history.");
@@ -176,17 +243,20 @@ export default function HistoryPage() {
     fetchHistory();
   }, [fetchHistory]);
 
-  const reports = useMemo(
-    () => allReports.slice(0, rangeMode),
-    [allReports, rangeMode],
+  const allDailySummaries = useMemo(() => buildDailySummaries(allReports), [allReports]);
+
+  const dailySummaries = useMemo(
+    () => allDailySummaries.slice(0, rangeMode),
+    [allDailySummaries, rangeMode],
   );
 
   const average = useMemo(
     () =>
-      reports.length
-        ? reports.reduce((sum, report) => sum + report.total_co2e_kg, 0) / reports.length
+      dailySummaries.length
+        ? dailySummaries.reduce((sum, summary) => sum + summary.total_co2e_kg, 0) /
+          dailySummaries.length
         : 0,
-    [reports],
+    [dailySummaries],
   );
 
   if (isLoading) {
@@ -212,8 +282,8 @@ export default function HistoryPage() {
               Carbon Insights
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              Latest {reports.length} records
-              {reports.length > 0 ? `, average ${average.toFixed(1)} kg CO2e` : ""}
+              Latest {dailySummaries.length} days
+              {dailySummaries.length > 0 ? `, average ${average.toFixed(1)} kg CO2e/day` : ""}
             </p>
           </div>
           <div className="flex gap-2">
@@ -276,7 +346,7 @@ export default function HistoryPage() {
           </div>
         )}
 
-        {reports.length === 0 ? (
+        {dailySummaries.length === 0 ? (
           <div className="card p-8 text-center">
             <div className="text-4xl">📊</div>
             <h2 className="mt-4 text-xl font-semibold text-gray-900">No records yet</h2>
@@ -292,30 +362,34 @@ export default function HistoryPage() {
             {viewMode === "chart" && (
               <section className="card mb-6 p-6 sm:p-8">
                 <h2 className="mb-4 text-lg font-semibold text-gray-900">
-                  {rangeMode === 7 ? "Last 7 records" : "Last 30 records"}
+                  {rangeMode === 7 ? "Last 7 days" : "Last 30 days"}
                 </h2>
                 <div className="h-72">
-                  <Bar data={buildChartData(reports)} options={chartOptions} />
+                  <Bar data={buildChartData(dailySummaries)} options={chartOptions} />
                 </div>
               </section>
             )}
 
             <section className="space-y-3">
-              {reports.map((report) => {
-                const color = colorForReport(report);
+              {dailySummaries.map((summary) => {
+                const color = colorForSummary(summary);
                 return (
                   <Link
-                    key={report.session_id}
-                    href={`/report?sessionId=${encodeURIComponent(report.session_id)}`}
+                    key={summary.dayKey}
+                    href={`/insights/day?date=${encodeURIComponent(summary.dayKey)}`}
                     className={`card block border-l-4 p-4 transition hover:shadow-card-hover sm:p-5 ${color.bg} ${color.border}`}
                   >
                     <div className="flex flex-wrap items-center gap-4">
                       <div className="min-w-[160px]">
                         <p className="text-sm font-semibold text-gray-950">
-                          {formatDate(report.timestamp)}
+                          {formatDate(summary.timestamp)}
                         </p>
                         <p className={`mt-1 text-xs font-medium ${color.text}`}>
                           {color.label}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-500">
+                          {summary.reports.length}{" "}
+                          {summary.reports.length === 1 ? "entry" : "entries"} recorded
                         </p>
                       </div>
                       <div className="hidden flex-1 sm:block">
@@ -323,7 +397,7 @@ export default function HistoryPage() {
                           <div
                             className="h-full rounded-full"
                             style={{
-                              width: `${Math.min(100, (report.total_co2e_kg / Math.max(1, nationalAverage(report) * 2.5)) * 100)}%`,
+                              width: `${Math.min(100, (summary.total_co2e_kg / Math.max(1, nationalAverage(summary) * 2.5)) * 100)}%`,
                               backgroundColor: color.bar,
                             }}
                           />
@@ -331,10 +405,25 @@ export default function HistoryPage() {
                       </div>
                       <div className="ml-auto text-right">
                         <p className={`text-xl font-bold ${color.text}`}>
-                          {report.total_co2e_kg.toFixed(1)}
+                          {summary.total_co2e_kg.toFixed(1)}
                         </p>
                         <p className="text-xs text-gray-500">kg CO2e</p>
                       </div>
+                    </div>
+                    <div className="mt-4 border-t border-white/70 pt-3">
+                      <div className="flex flex-wrap gap-2">
+                        {summary.categories.slice(0, 4).map((category) => (
+                          <span
+                            key={category.category}
+                            className="rounded-full bg-white/75 px-3 py-1.5 text-xs font-medium text-gray-700"
+                          >
+                            {category.category} {category.kg_co2e.toFixed(1)} kg
+                          </span>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs text-gray-500">
+                        Open daily details to review the records behind this total.
+                      </p>
                     </div>
                   </Link>
                 );

@@ -115,7 +115,13 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
 
   return (
     <section className="card p-6 sm:p-8">
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Reduction Suggestions</h2>
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Entry Reduction Suggestions</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Tactical ideas for this single record. Discovery Hub turns your 30-day trend into
+          one longer-term plan.
+        </p>
+      </div>
       <div className="space-y-3">
         {suggestions.map((suggestion) => {
           const current = feedback[suggestion.title];
@@ -269,7 +275,7 @@ function ReportContent() {
     setError(null);
     try {
       const response = await fetch(
-        `/api/carbon/report?sessionId=${encodeURIComponent(sessionId)}&userId=default`,
+        `/api/insights/report?sessionId=${encodeURIComponent(sessionId)}&userId=default`,
       );
       const result = await response.json();
       if (!result.success) {
@@ -301,7 +307,7 @@ function ReportContent() {
       setError(null);
       try {
         const response = await fetch(
-          `/api/carbon/report/record?sessionId=${encodeURIComponent(sessionId)}&recordId=${encodeURIComponent(recordId)}&userId=default`,
+          `/api/insights/report/record?sessionId=${encodeURIComponent(sessionId)}&recordId=${encodeURIComponent(recordId)}&userId=default`,
           { method: "DELETE" },
         );
         const result = await response.json();
@@ -334,7 +340,7 @@ function ReportContent() {
     setError(null);
     try {
       const response = await fetch(
-        `/api/carbon/report?sessionId=${encodeURIComponent(sessionId)}&userId=default`,
+        `/api/insights/report?sessionId=${encodeURIComponent(sessionId)}&userId=default`,
         { method: "DELETE" },
       );
       const result = await response.json();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { loadActiveAdvicePlan } from "@/lib/advice";
 import type { AdvicePlan } from "@/lib/types";
@@ -9,17 +9,6 @@ interface UserSettings {
   country: string;
   diet: string;
   transport: string;
-}
-
-interface FeedbackEntry {
-  suggestionTitle?: string;
-  title?: string;
-  reductionKg?: number;
-  suggestionText?: string;
-  category?: string;
-  difficulty?: "easy" | "medium" | "hard";
-  accepted: boolean;
-  timestamp: string;
 }
 
 const DEFAULT_SETTINGS: UserSettings = {
@@ -50,16 +39,6 @@ const TRANSPORT_OPTIONS = [
   { value: "public", label: "Public transit" },
 ];
 
-const DIFFICULTY_LABELS: Record<NonNullable<FeedbackEntry["difficulty"]>, string> = {
-  easy: "Easy",
-  medium: "Medium",
-  hard: "Hard",
-};
-
-function displayCategory(category: string): string {
-  return category;
-}
-
 function loadSettings(): UserSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
@@ -74,58 +53,15 @@ function saveSettings(settings: UserSettings): void {
   localStorage.setItem("carbonlens_settings", JSON.stringify(settings));
 }
 
-function loadFeedback(): FeedbackEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem("carbonlens_feedback");
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function formatFeedbackDate(value: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
-
 export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_SETTINGS);
-  const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
   const [activeAdvice, setActiveAdvice] = useState<AdvicePlan | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     setSettings(loadSettings());
-    setFeedback(loadFeedback());
     setActiveAdvice(loadActiveAdvicePlan());
   }, []);
-
-  const stats = useMemo(() => {
-    const accepted = feedback.filter((entry) => entry.accepted);
-    const rejected = feedback.filter((entry) => !entry.accepted);
-    return {
-      acceptedCount: accepted.length,
-      rejectedCount: rejected.length,
-      totalReduction: accepted.reduce((sum, entry) => sum + (entry.reductionKg ?? 0), 0),
-    };
-  }, [feedback]);
-
-  const acceptedSuggestions = useMemo(
-    () =>
-      feedback
-        .filter((entry) => entry.accepted)
-        .slice()
-        .sort(
-          (a, b) =>
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-        ),
-    [feedback],
-  );
 
   const updateSetting = useCallback(
     (key: keyof UserSettings, value: string) => {
@@ -137,11 +73,6 @@ export default function SettingsPage() {
     },
     [settings],
   );
-
-  const clearFeedback = useCallback(() => {
-    localStorage.removeItem("carbonlens_feedback");
-    setFeedback([]);
-  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-green-50 to-white pb-16">
@@ -233,105 +164,6 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
-        </section>
-
-        <section className="card p-6 sm:p-8">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-xl">🏆</span>
-            <h2 className="text-lg font-semibold text-gray-900">Adoption Stats</h2>
-          </div>
-          <p className="mb-5 text-sm text-gray-500">
-            These stats come from the report page's Try it button and are stored locally in this browser.
-          </p>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-lg bg-green-50 p-4">
-              <p className="text-3xl font-extrabold text-primary">
-                {stats.acceptedCount}
-              </p>
-              <p className="mt-1 text-sm text-gray-600">Adopted suggestions</p>
-            </div>
-            <div className="rounded-lg bg-gray-50 p-4">
-              <p className="text-3xl font-extrabold text-gray-700">
-                {stats.rejectedCount}
-              </p>
-              <p className="mt-1 text-sm text-gray-600">Skipped suggestions</p>
-            </div>
-            <div className="rounded-lg bg-green-50 p-4">
-              <p className="text-3xl font-extrabold text-primary">
-                {stats.totalReduction.toFixed(1)}
-              </p>
-              <p className="mt-1 text-sm text-gray-600">kg CO2e estimated reduction</p>
-            </div>
-          </div>
-
-          {stats.acceptedCount === 0 ? (
-            <p className="mt-4 text-sm text-gray-400">
-              Open any report and choose Try it on a suggestion. The adopted suggestion will appear here.
-            </p>
-          ) : (
-            <div className="mt-5">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Adopted Suggestions
-                </h3>
-                <span className="text-xs text-gray-400">
-                  Latest {acceptedSuggestions.length}
-                </span>
-              </div>
-              <div className="space-y-3">
-                {acceptedSuggestions.map((entry, index) => {
-                  const title = entry.suggestionTitle || entry.title || "Untitled suggestion";
-                  return (
-                    <article
-                      key={`${title}-${entry.timestamp}-${index}`}
-                      className="rounded-xl border border-green-100 bg-green-50/70 p-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <h4 className="font-semibold text-gray-950">{title}</h4>
-                          {entry.suggestionText && (
-                            <p className="mt-1 text-sm leading-6 text-green-800">
-                              {entry.suggestionText}
-                            </p>
-                          )}
-                        </div>
-                        <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-primary">
-                          -{(entry.reductionKg ?? 0).toFixed(1)} kg
-                        </span>
-                      </div>
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                        {entry.category && (
-                          <span className="rounded-full bg-white px-2 py-1">
-                            {displayCategory(entry.category)}
-                          </span>
-                        )}
-                        {entry.difficulty && (
-                          <span className="rounded-full bg-white px-2 py-1">
-                            {DIFFICULTY_LABELS[entry.difficulty]}
-                          </span>
-                        )}
-                        <span>{formatFeedbackDate(entry.timestamp)}</span>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-              <p className="mt-4 text-sm text-green-700">
-                Nice progress. Adopted suggestions help you steadily lower your personal footprint.
-              </p>
-            </div>
-          )}
-
-          {feedback.length > 0 && (
-            <button
-              type="button"
-              onClick={clearFeedback}
-              className="mt-5 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
-            >
-              Clear adoption stats
-            </button>
-          )}
         </section>
       </div>
     </main>

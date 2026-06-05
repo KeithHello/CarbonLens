@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  estimatePlanReductionKg,
   generateAdvicePlans,
   loadActiveAdvicePlan,
   mergeSelectedPlanWithLatest,
@@ -26,9 +27,13 @@ function createDraft(plan: AdvicePlan): EditingDraft {
 }
 
 function applyDraft(plan: AdvicePlan, draft: EditingDraft): AdvicePlan {
-  return {
+  const editedPlan = {
     ...plan,
     ...draft,
+  };
+  return {
+    ...editedPlan,
+    estimated_reduction_kg: estimatePlanReductionKg(editedPlan),
     user_edited: true,
     updated_at: new Date().toISOString(),
   };
@@ -56,7 +61,7 @@ export default function AdvicePage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/carbon/history?userId=default&days=30");
+      const response = await fetch("/api/discovery-hub?userId=default&days=30");
       const result = await response.json();
       if (!result.success) {
         setError(result.error || "Failed to load the last 30 days.");
@@ -199,6 +204,10 @@ export default function AdvicePage() {
             {plans.map((plan) => {
               const isSelected = activePlan?.id === plan.id;
               const isEditing = editingPlanId === plan.id;
+              const draftReduction =
+                isEditing && draft
+                  ? estimatePlanReductionKg({ ...plan, ...draft })
+                  : plan.estimated_reduction_kg;
 
               return (
                 <article
@@ -220,7 +229,7 @@ export default function AdvicePage() {
                           {plan.difficulty}
                         </span>
                         <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
-                          -{plan.estimated_reduction_kg.toFixed(1)} kg/day potential
+                          -{draftReduction.toFixed(1)} kg/day potential
                         </span>
                         {isSelected && (
                           <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-white">
@@ -266,6 +275,9 @@ export default function AdvicePage() {
                             }
                             className="input-field min-h-[70px]"
                           />
+                          <p className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+                            Updated daily reduction prediction: -{draftReduction.toFixed(1)} kg CO2e/day
+                          </p>
                         </div>
                       ) : (
                         <>
