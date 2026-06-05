@@ -13,15 +13,12 @@ import {
   type ChartOptions,
 } from "chart.js";
 import type { CarbonReport } from "@/lib/types";
-import benchmarks from "../../../data/global_benchmarks.json";
+import { getCountryReference, loadStoredCountryCode } from "@/lib/benchmarks";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 type ViewMode = "chart" | "list";
 type RangeMode = 7 | 30;
-
-const NATIONAL_DAILY_AVERAGE =
-  benchmarks.find((benchmark) => benchmark.country_code === "JP")?.daily_kg_co2e ?? 22.3;
 
 interface DailyCarbonSummary {
   dayKey: string;
@@ -64,7 +61,7 @@ function formatShortDate(value: string): string {
 }
 
 function nationalAverage(summary: DailyCarbonSummary): number {
-  return summary.national_avg_kg || NATIONAL_DAILY_AVERAGE;
+  return summary.national_avg_kg || getCountryReference().daily_kg_co2e;
 }
 
 function colorForSummary(summary: DailyCarbonSummary): {
@@ -132,7 +129,10 @@ function colorForSummary(summary: DailyCarbonSummary): {
   };
 }
 
-function buildDailySummaries(reports: CarbonReport[]): DailyCarbonSummary[] {
+function buildDailySummaries(
+  reports: CarbonReport[],
+  nationalDailyAverage: number,
+): DailyCarbonSummary[] {
   const groups = new Map<string, CarbonReport[]>();
   for (const report of reports) {
     const key = dayKey(report.timestamp);
@@ -163,7 +163,7 @@ function buildDailySummaries(reports: CarbonReport[]): DailyCarbonSummary[] {
         timestamp: sorted[0].timestamp,
         reports: sorted,
         total_co2e_kg: total,
-        national_avg_kg: NATIONAL_DAILY_AVERAGE,
+        national_avg_kg: nationalDailyAverage,
         categories,
       };
     })
@@ -220,6 +220,9 @@ export default function HistoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("chart");
   const [rangeMode, setRangeMode] = useState<RangeMode>(7);
+  const [nationalDailyAverage, setNationalDailyAverage] = useState(
+    () => getCountryReference().daily_kg_co2e,
+  );
 
   const fetchHistory = useCallback(async () => {
     setIsLoading(true);
@@ -243,7 +246,14 @@ export default function HistoryPage() {
     fetchHistory();
   }, [fetchHistory]);
 
-  const allDailySummaries = useMemo(() => buildDailySummaries(allReports), [allReports]);
+  useEffect(() => {
+    setNationalDailyAverage(getCountryReference(loadStoredCountryCode()).daily_kg_co2e);
+  }, []);
+
+  const allDailySummaries = useMemo(
+    () => buildDailySummaries(allReports, nationalDailyAverage),
+    [allReports, nationalDailyAverage],
+  );
 
   const dailySummaries = useMemo(
     () => allDailySummaries.slice(0, rangeMode),

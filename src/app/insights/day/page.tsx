@@ -5,7 +5,13 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import EmissionPieChart from "@/components/EmissionPieChart";
 import type { ActivityRecord, CarbonReport, EmissionBreakdown } from "@/lib/types";
-import benchmarks from "../../../../data/global_benchmarks.json";
+import {
+  formatBenchmarkReference,
+  getCountryReference,
+  GLOBAL_REFERENCE,
+  loadStoredCountryCode,
+  type BenchmarkReference,
+} from "@/lib/benchmarks";
 
 type ReportWithInput = CarbonReport & { input?: string };
 
@@ -14,26 +20,6 @@ interface CategorySummary {
   kg_co2e: number;
   percentage: number;
 }
-
-interface BenchmarkReference {
-  country: string;
-  country_code: string;
-  daily_kg_co2e: number;
-  annual_tonnes_co2e: number;
-  source: string;
-  source_url: string;
-  metric: string;
-  year: number;
-}
-
-const BENCHMARK_REFERENCES = benchmarks as BenchmarkReference[];
-const GLOBAL_REFERENCE =
-  BENCHMARK_REFERENCES.find((benchmark) => benchmark.country_code === "GLOBAL") ??
-  BENCHMARK_REFERENCES[0];
-const NATIONAL_REFERENCE =
-  BENCHMARK_REFERENCES.find((benchmark) => benchmark.country_code === "JP") ??
-  BENCHMARK_REFERENCES[1] ??
-  GLOBAL_REFERENCE;
 
 function dayKey(value: string): string {
   const parts = new Intl.DateTimeFormat("en", {
@@ -65,10 +51,6 @@ function formatRatio(total: number, average: number): string {
   if (!average || !Number.isFinite(average)) return "No baseline";
   const percentage = Math.round((total / average) * 100);
   return `${percentage}% of daily average`;
-}
-
-function formatReference(reference: BenchmarkReference): string {
-  return `${reference.source}, ${reference.year}. ${reference.metric}; ${reference.annual_tonnes_co2e.toFixed(2)} t CO2e/person/year converted to ${reference.daily_kg_co2e.toFixed(1)} kg CO2e/day.`;
 }
 
 function recordsFromReport(report: ReportWithInput): ActivityRecord[] {
@@ -142,6 +124,9 @@ function DayDetailContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [deletingRecordKey, setDeletingRecordKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [nationalReference, setNationalReference] = useState<BenchmarkReference>(() =>
+    getCountryReference(),
+  );
 
   const fetchReports = useCallback(async () => {
     setIsLoading(true);
@@ -168,6 +153,10 @@ function DayDetailContent() {
     fetchReports();
   }, [fetchReports]);
 
+  useEffect(() => {
+    setNationalReference(getCountryReference(loadStoredCountryCode()));
+  }, []);
+
   const total = useMemo(
     () => reports.reduce((sum, report) => sum + report.total_co2e_kg, 0),
     [reports],
@@ -179,8 +168,8 @@ function DayDetailContent() {
     [reports.length],
   );
   const nationalAverage = useMemo(
-    () => (reports.length ? NATIONAL_REFERENCE.daily_kg_co2e : 0),
-    [reports.length],
+    () => (reports.length ? nationalReference.daily_kg_co2e : 0),
+    [nationalReference.daily_kg_co2e, reports.length],
   );
 
   const deleteRecord = useCallback(
@@ -296,7 +285,7 @@ function DayDetailContent() {
                 </div>
                 <div className="rounded-lg bg-gray-50 p-4">
                   <p className="text-sm text-gray-500">
-                    {NATIONAL_REFERENCE.country} daily average
+                    {nationalReference.country} daily average
                   </p>
                   <p className="mt-1 text-xl font-bold text-gray-950">
                     {nationalAverage.toFixed(1)} kg
@@ -309,7 +298,7 @@ function DayDetailContent() {
               <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                 <div className="rounded-lg bg-green-50 px-4 py-3 text-green-800">
                   <p className="font-semibold">Global Reference</p>
-                  <p className="mt-1 leading-6">{formatReference(GLOBAL_REFERENCE)}</p>
+                  <p className="mt-1 leading-6">{formatBenchmarkReference(GLOBAL_REFERENCE)}</p>
                   <a
                     href={GLOBAL_REFERENCE.source_url}
                     target="_blank"
@@ -320,10 +309,10 @@ function DayDetailContent() {
                   </a>
                 </div>
                 <div className="rounded-lg bg-green-50 px-4 py-3 text-green-800">
-                  <p className="font-semibold">{NATIONAL_REFERENCE.country} Reference</p>
-                  <p className="mt-1 leading-6">{formatReference(NATIONAL_REFERENCE)}</p>
+                  <p className="font-semibold">{nationalReference.country} Reference</p>
+                  <p className="mt-1 leading-6">{formatBenchmarkReference(nationalReference)}</p>
                   <a
-                    href={NATIONAL_REFERENCE.source_url}
+                    href={nationalReference.source_url}
                     target="_blank"
                     rel="noreferrer"
                     className="mt-2 inline-block font-medium text-primary hover:text-primary-700"
