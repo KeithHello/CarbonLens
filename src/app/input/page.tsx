@@ -330,12 +330,18 @@ export default function InputPage() {
             {CATEGORIES.map((category) => (
               <div
                 key={category.label}
-                className="shrink-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 sm:shrink sm:px-4"
+                className="grid h-16 w-52 shrink-0 grid-cols-[24px_1fr] items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 text-sm text-gray-600 sm:w-auto sm:shrink"
               >
-                <span className="mr-1.5">{category.icon}</span>
-                <span className="font-medium text-gray-800">{category.label}</span>
-                <span className="ml-2 whitespace-nowrap text-xs text-gray-400">
-                  {category.hint}
+                <span className="flex h-6 w-6 items-center justify-center text-base leading-none">
+                  {category.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold leading-5 text-gray-900">
+                    {category.label}
+                  </span>
+                  <span className="block truncate text-xs leading-4 text-gray-400">
+                    {category.hint}
+                  </span>
                 </span>
               </div>
             ))}
