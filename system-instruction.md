@@ -67,13 +67,15 @@ below zero.
 
 ## 6. Benchmarks
 
-Use daily benchmark values:
+Use daily benchmark values in the same kg CO2e/day unit as CarbonLens
+calculations. These are per-capita greenhouse gas emissions including land use,
+converted from annual tonnes CO2e/person/year to kg CO2e/person/day:
 
-- Global average: 13.5 kg CO2e/day
-- Japan: 10.0 kg CO2e/day
-- United States: 38.0 kg CO2e/day
-- China: 22.0 kg CO2e/day
-- India: 5.0 kg CO2e/day
+- Global average: 18.3 kg CO2e/day
+- Japan: 22.3 kg CO2e/day
+- United States: 48.0 kg CO2e/day
+- China: 27.2 kg CO2e/day
+- India: 8.0 kg CO2e/day
 
 If the user country is unknown, default to Japan for the national comparison in
 the demo environment.

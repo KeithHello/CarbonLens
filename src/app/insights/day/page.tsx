@@ -19,7 +19,10 @@ interface BenchmarkReference {
   country: string;
   country_code: string;
   daily_kg_co2e: number;
+  annual_tonnes_co2e: number;
   source: string;
+  source_url: string;
+  metric: string;
   year: number;
 }
 
@@ -62,6 +65,10 @@ function formatRatio(total: number, average: number): string {
   if (!average || !Number.isFinite(average)) return "No baseline";
   const percentage = Math.round((total / average) * 100);
   return `${percentage}% of daily average`;
+}
+
+function formatReference(reference: BenchmarkReference): string {
+  return `${reference.source}, ${reference.year}. ${reference.metric}; ${reference.annual_tonnes_co2e.toFixed(2)} t CO2e/person/year converted to ${reference.daily_kg_co2e.toFixed(1)} kg CO2e/day.`;
 }
 
 function recordsFromReport(report: ReportWithInput): ActivityRecord[] {
@@ -299,13 +306,31 @@ function DayDetailContent() {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
-                <p className="font-semibold">Reference</p>
-                <p className="mt-1">
-                  Global: {GLOBAL_REFERENCE.source}, {GLOBAL_REFERENCE.year}.{" "}
-                  {NATIONAL_REFERENCE.country}: {NATIONAL_REFERENCE.source},{" "}
-                  {NATIONAL_REFERENCE.year}.
-                </p>
+              <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                <div className="rounded-lg bg-green-50 px-4 py-3 text-green-800">
+                  <p className="font-semibold">Global Reference</p>
+                  <p className="mt-1 leading-6">{formatReference(GLOBAL_REFERENCE)}</p>
+                  <a
+                    href={GLOBAL_REFERENCE.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-block font-medium text-primary hover:text-primary-700"
+                  >
+                    View source
+                  </a>
+                </div>
+                <div className="rounded-lg bg-green-50 px-4 py-3 text-green-800">
+                  <p className="font-semibold">{NATIONAL_REFERENCE.country} Reference</p>
+                  <p className="mt-1 leading-6">{formatReference(NATIONAL_REFERENCE)}</p>
+                  <a
+                    href={NATIONAL_REFERENCE.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-block font-medium text-primary hover:text-primary-700"
+                  >
+                    View source
+                  </a>
+                </div>
               </div>
             </section>
 

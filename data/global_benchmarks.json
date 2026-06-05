@@ -2,41 +2,51 @@
   {
     "country": "Global average",
     "country_code": "GLOBAL",
-    "daily_kg_co2e": 6.8,
-    "annual_tonnes_co2e": 2.5,
-    "source": "Global Carbon Project 2025",
-    "year": 2025
+    "daily_kg_co2e": 18.3,
+    "annual_tonnes_co2e": 6.67,
+    "source": "Our World in Data - Per capita greenhouse gas emissions including land use",
+    "source_url": "https://ourworldindata.org/grapher/per-capita-ghg-emissions",
+    "metric": "GHG emissions including land use, tonnes CO2e per person",
+    "year": 2024
   },
   {
     "country": "Japan",
     "country_code": "JP",
-    "daily_kg_co2e": 23.2,
-    "annual_tonnes_co2e": 8.5,
-    "source": "Japan Ministry of the Environment 2025",
-    "year": 2025
+    "daily_kg_co2e": 22.3,
+    "annual_tonnes_co2e": 8.14,
+    "source": "Our World in Data - Per capita greenhouse gas emissions including land use",
+    "source_url": "https://ourworldindata.org/grapher/per-capita-ghg-emissions?country=~JPN",
+    "metric": "GHG emissions including land use, tonnes CO2e per person",
+    "year": 2024
   },
   {
     "country": "United States",
     "country_code": "US",
-    "daily_kg_co2e": 42.5,
-    "annual_tonnes_co2e": 15.5,
-    "source": "EPA GHG Inventory 2025",
-    "year": 2025
+    "daily_kg_co2e": 48.0,
+    "annual_tonnes_co2e": 17.53,
+    "source": "Our World in Data - Per capita greenhouse gas emissions including land use",
+    "source_url": "https://ourworldindata.org/grapher/per-capita-ghg-emissions?country=~USA",
+    "metric": "GHG emissions including land use, tonnes CO2e per person",
+    "year": 2024
   },
   {
     "country": "China",
     "country_code": "CN",
-    "daily_kg_co2e": 20.8,
-    "annual_tonnes_co2e": 7.6,
-    "source": "China Carbon Accounting Database",
-    "year": 2025
+    "daily_kg_co2e": 27.2,
+    "annual_tonnes_co2e": 9.94,
+    "source": "Our World in Data - Per capita greenhouse gas emissions including land use",
+    "source_url": "https://ourworldindata.org/grapher/per-capita-ghg-emissions?country=~CHN",
+    "metric": "GHG emissions including land use, tonnes CO2e per person",
+    "year": 2024
   },
   {
     "country": "India",
     "country_code": "IN",
-    "daily_kg_co2e": 5.2,
-    "annual_tonnes_co2e": 1.9,
-    "source": "Global Carbon Project 2025",
-    "year": 2025
+    "daily_kg_co2e": 8.0,
+    "annual_tonnes_co2e": 2.94,
+    "source": "Our World in Data - Per capita greenhouse gas emissions including land use",
+    "source_url": "https://ourworldindata.org/grapher/per-capita-ghg-emissions?country=~IND",
+    "metric": "GHG emissions including land use, tonnes CO2e per person",
+    "year": 2024
   }
 ]

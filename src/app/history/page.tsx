@@ -13,11 +13,15 @@ import {
   type ChartOptions,
 } from "chart.js";
 import type { CarbonReport } from "@/lib/types";
+import benchmarks from "../../../data/global_benchmarks.json";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 type ViewMode = "chart" | "list";
 type RangeMode = 7 | 30;
+
+const NATIONAL_DAILY_AVERAGE =
+  benchmarks.find((benchmark) => benchmark.country_code === "JP")?.daily_kg_co2e ?? 22.3;
 
 interface DailyCarbonSummary {
   dayKey: string;
@@ -60,7 +64,7 @@ function formatShortDate(value: string): string {
 }
 
 function nationalAverage(summary: DailyCarbonSummary): number {
-  return summary.national_avg_kg || 10;
+  return summary.national_avg_kg || NATIONAL_DAILY_AVERAGE;
 }
 
 function colorForSummary(summary: DailyCarbonSummary): {
@@ -154,16 +158,12 @@ function buildDailySummaries(reports: CarbonReport[]): DailyCarbonSummary[] {
           percentage: total > 0 ? (kg / total) * 100 : 0,
         }))
         .sort((a, b) => b.kg_co2e - a.kg_co2e);
-      const nationalAverageTotal = sorted.reduce(
-        (sum, report) => sum + (report.comparison?.national_avg_kg || 10),
-        0,
-      );
       return {
         dayKey: key,
         timestamp: sorted[0].timestamp,
         reports: sorted,
         total_co2e_kg: total,
-        national_avg_kg: nationalAverageTotal / Math.max(1, sorted.length),
+        national_avg_kg: NATIONAL_DAILY_AVERAGE,
         categories,
       };
     })

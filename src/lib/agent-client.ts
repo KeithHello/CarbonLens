@@ -274,8 +274,8 @@ function generateMockReport(input: string, userId?: string): CarbonReport {
     .filter(Boolean)
     .slice(0, 3) as Suggestion[];
 
-  const globalAvg = 13.5;
-  const nationalAvg = 10;
+  const globalAvg = 18.3;
+  const nationalAvg = 22.3;
   const personalAvg = 8.5;
 
   return {
