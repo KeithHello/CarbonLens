@@ -4,6 +4,16 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import VoiceRecorder from "@/components/VoiceRecorder";
 
+function dayKeyFromTimestamp(value?: string): string {
+  const parts = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value ? new Date(value) : new Date());
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
 export default function VoicePage() {
   const router = useRouter();
   const [transcript, setTranscript] = useState("");
@@ -42,7 +52,9 @@ export default function VoicePage() {
         return;
       }
 
-      router.push(`/report?sessionId=${encodeURIComponent(result.data.session_id)}`);
+      router.push(
+        `/insights/day?date=${encodeURIComponent(dayKeyFromTimestamp(result.data.timestamp))}`,
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error.");
       setIsCalculating(false);

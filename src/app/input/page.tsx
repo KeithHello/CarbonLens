@@ -159,6 +159,16 @@ function mergeTranscript(baseText: string, transcript: string): string {
   return trimmedBase ? `${trimmedBase}, ${trimmedTranscript}` : trimmedTranscript;
 }
 
+function dayKeyFromTimestamp(value?: string): string {
+  const parts = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value ? new Date(value) : new Date());
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
 export default function InputPage() {
   const router = useRouter();
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
@@ -349,7 +359,9 @@ export default function InputPage() {
           setIsLoading(false);
           return;
         }
-        router.push(`/report?sessionId=${encodeURIComponent(result.data.session_id)}`);
+        router.push(
+          `/insights/day?date=${encodeURIComponent(dayKeyFromTimestamp(result.data.timestamp))}`,
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : "Request failed. Please try again.");
         setIsLoading(false);
