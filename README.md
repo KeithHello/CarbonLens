@@ -1,183 +1,189 @@
-# CarbonLens 🌍
+# CarbonLens
 
-AI-powered carbon footprint tracker for the **Google Cloud Rapid Agent Hackathon 2026**.
+CarbonLens is an English-first carbon footprint tracker built for the Google Cloud Rapid Agent Hackathon.
 
-Built with **Gemini 3.5 Flash + Vertex AI Agent Builder + MongoDB MCP**.
+It combines:
 
-## How It Works
+- a Next.js frontend for text, voice, report, history, and settings workflows
+- a Google ADK multi-agent backend deployed on Google Cloud Agent Engine
+- MongoDB Atlas accessed through the MongoDB MCP server
+- Gemini Flash for fast parsing, matching, and report generation
 
-1. 🎤 **Speak** or ✏️ **type** your daily activities in natural language
-2. AI agent matches activities to 64 emission factors and calculates your carbon footprint
-3. Compare your footprint against global and national benchmarks
-4. Get personalized, ranked reduction suggestions with difficulty levels
-5. Track your progress over time with charts and history
+## What It Does
+
+1. Users describe daily activities in natural language.
+2. The agent parses activities, looks up emission factors, and calculates CO2e.
+3. The result is compared with global, national, and personal benchmarks.
+4. Ranked reduction suggestions are generated and tracked locally.
+5. Reports and history are persisted in MongoDB for later review.
 
 ## Architecture
 
-```
-User Browser (Next.js 14)
-        │
-        ├── Voice/Text Input
-        │
-        ▼
-CarbonLens Frontend ──► /api/carbon/calculate
-        │                      │
-        │                      ▼
-        │              Agent Engine (Gemini 3.5 Flash)
-        │                      │
-        │                      ├── MongoDB MCP Server (find/insert)
-        │                      │         │
-        │                      ▼         ▼
-        │               MongoDB Atlas
-        │               ├── emission_factors (64 entries)
-        │               ├── user_entries
-        │               ├── global_benchmarks (5 countries)
-        │               └── user_profiles
-        │
-        ▼
-    Report Page
-    ├── Pie Chart (category breakdown)
-    ├── Gauge (global + national percentile)
-    ├── Trend Line (30-day history with anomaly detection)
-    └── Reduction Suggestions (with feedback buttons)
+The current production flow is:
+
+- `Next.js` frontend
+- `/api/carbon/calculate` proxy route
+- `Agent Engine` multi-agent workflow
+- `MongoDB MCP` tool access
+- `MongoDB Atlas` persistence for reports, benchmarks, and demo data
+
+The active agent orchestration is:
+
+```text
+activity_parser -> factor_matcher -> benchmark_advisor
 ```
 
-## Features
+The deployed agent uses:
 
-- **Natural Language Input** — describe your day in Chinese, English, or Japanese
-- **Voice Input** — Web Speech API with real-time activity detection tags
-- **64 Emission Factors** — transport, food, energy, consumer goods, waste
-- **5-Tier Classification** — from low to extreme with per-country benchmarks
-- **Personalized Suggestions** — 14 reduction methods ranked by feasibility
-- **Carbon Gauge** — SVG semicircle visualization of your global/national percentile
-- **30-Day Trend** — line chart with anomaly highlights
-- **User Preferences** — country, diet, transport settings persisted locally
-- **Dark-ready** — Tailwind-based design with consistent green brand palette
+- `gemini-flash-latest`
+- `GOOGLE_GENAI_USE_VERTEXAI=false`
+- `GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`
+
+## Key Features
+
+- Natural language logging in English
+- Voice input with the browser Web Speech API
+- Report page with category breakdown, comparison, and tree offset reference
+- History page with chart and list views
+- Record deletion at both the report and single-record level
+- Local adoption statistics in settings
+- Demo data reset script with deterministic sample records
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 14 (App Router) + TypeScript |
-| Styling | Tailwind CSS + custom animations |
-| Charts | Chart.js (react-chartjs-2) |
-| AI Agent | Vertex AI Agent Builder + Gemini 3.5 Flash |
-| Data | MongoDB Atlas via MCP Server |
-| Voice | Web Speech API (`zh-CN`) |
-| Deploy | Google Cloud Run + Cloud Build |
-| CI | GitHub Actions |
+| --- | --- |
+| Frontend | Next.js 14 App Router + TypeScript |
+| Styling | Tailwind CSS |
+| Charts | Chart.js + react-chartjs-2 |
+| Agent framework | Google ADK |
+| Agent runtime | Google Cloud Agent Engine |
+| Model | Gemini Flash |
+| Database | MongoDB Atlas |
+| MCP server | `mongodb-mcp-server` |
+| Voice | Web Speech API |
 
-## Quick Start
+## Project Structure
 
-### Frontend (Next.js)
+```text
+src/
+  app/
+    page.tsx        # Landing page
+    input/page.tsx  # Text input page
+    voice/page.tsx  # Voice input page
+    report/page.tsx # Carbon report
+    history/page.tsx# History view
+    settings/page.tsx
+    api/carbon/     # API routes
+  components/
+    CarbonGauge.tsx
+    EmissionPieChart.tsx
+    TrendLineChart.tsx
+    VoiceRecorder.tsx
+  lib/
+    agent-client.ts
+    mongodb.ts
+    types.ts
+agent/
+  agent.py
+  agent_engine_app.py
+  deploy.py
+data/
+  emission_factors.json
+  global_benchmarks.json
+scripts/
+  reset-demo-data.js
+  import-commands.mongosh.js
+docs/
+  agent-orchestration.md
+  demo-data.md
+  CarbonLens_Development_Plan_v2.1.md
+```
+
+## Getting Started
+
+### Frontend
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000
-(Mock mode active by default — no cloud setup needed)
+Open the app at the local URL printed by Next.js.
 
-### Agent (ADK + MongoDB MCP)
+### Agent
 
-```bash
-# 1. Install Python dependencies
-pip install -r agent/requirements.txt
+The agent is deployed to Google Cloud Agent Engine and can also be run locally with ADK tooling if needed.
 
-# 2. Start MongoDB MCP Server (requires Node.js)
-npx mongodb-mcp-server@latest setup
+### Demo Data
 
-# 3. Configure agent/.env from agent/.env.example
-#    Set GOOGLE_CLOUD_PROJECT and MONGODB_MCP_URL
-
-# 4. Run agent locally with ADK Dev UI
-adk web
-# → Open http://localhost:8000, select "carbonlens" agent
-
-# 5. Deploy to Agent Engine
-python agent/deploy.py
-```
-
-## Environment Variables
-
-Create `.env.local`:
+Restore the demo dataset:
 
 ```bash
-# Leave empty for local mock mode:
-AGENT_ENGINE_URL=
-
-# Only needed for production (Agent Engine + GCP):
-# GCP_SERVICE_ACCOUNT_TOKEN=your-service-account-token
+npm run reset:demo
 ```
 
-## Deploy to Cloud Run
+Restore base collections only:
 
 ```bash
-# One-click deploy via Cloud Build
-gcloud builds submit --config=cloudbuild.yaml
-
-# Or manually:
-docker build -t gcr.io/$PROJECT_ID/carbonlens .
-docker push gcr.io/$PROJECT_ID/carbonlens
-gcloud run deploy carbonlens \
-  --image=gcr.io/$PROJECT_ID/carbonlens \
-  --region=asia-northeast1 \
-  --platform=managed \
-  --allow-unauthenticated
+npm run reset:empty
 ```
 
-## Project Structure
+## Environment
 
-```
-carbonlens/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Landing page
-│   │   ├── layout.tsx            # Root layout + NavBar
-│   │   ├── input/page.tsx        # Text input
-│   │   ├── voice/page.tsx        # Voice input (Web Speech API)
-│   │   ├── report/page.tsx       # Carbon footprint report
-│   │   ├── history/page.tsx      # 30-day history + bar chart
-│   │   ├── settings/page.tsx     # User preferences
-│   │   └── api/carbon/           # API routes
-│   ├── components/
-│   │   ├── CarbonGauge.tsx       # SVG semicircle gauge
-│   │   ├── EmissionPieChart.tsx  # Chart.js pie chart
-│   │   ├── TrendLineChart.tsx    # Chart.js line chart
-│   │   └── VoiceRecorder.tsx     # Web Speech API logic
-│   └── lib/
-│       ├── agent-client.ts       # Agent Engine API client + mock
-│       └── types.ts              # TypeScript type definitions
-├── agent/
-│   ├── agent.py                  # ADK Agent definition (Gemini + MCP)
-│   ├── deploy.py                 # Deploy to Vertex AI Agent Engine
-│   ├── requirements.txt          # Python dependencies
-│   └── .env.example              # Agent environment template
-├── data/
-│   ├── emission_factors.json     # 64 emission factors
-│   └── benchmarks.json           # 5 country benchmarks
-├── scripts/
-│   └── import-factors.js         # MongoDB import script
-├── system-instruction.md         # Agent Builder system instruction
-├── Dockerfile
-├── cloudbuild.yaml
-└── .github/workflows/ci.yml
+The frontend expects server-side environment variables in `.env.local`.
+
+The agent uses `agent/.env` for MongoDB and Google Cloud settings.
+
+Important values include:
+
+- `AGENT_ENGINE_URL`
+- `GCP_SERVICE_ACCOUNT_TOKEN`
+- `GOOGLE_GENAI_USE_VERTEXAI`
+- `GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY`
+- `MONGODB_MCP_URL`
+
+## Scripts
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run reset:demo
+npm run reset:empty
+npm run test
+npm run test:data
+npm run test:mongodb
+npm run test:agent
+npm run test:api
 ```
 
-## MongoDB Track
+## Validation
 
-This project competes in the **MongoDB Track** of the Google Cloud Rapid Agent Hackathon.
+The repo includes tests for:
 
-Key MongoDB integration points:
-- **MCP Server** connects Agent Engine directly to MongoDB Atlas
-- Agent uses `find` to query emission factors by activity/category
-- Agent uses `insert-many` to persist each user calculation
-- Agent uses `aggregate` for 30-day trend and percentile analysis
-- Agent uses `update` for user profile preferences and feedback learning
+- seed and factor data
+- MongoDB connectivity and collection counts
+- Agent Platform orchestration
+- end-to-end API persistence
 
-See `system-instruction.md` for the full Agent Builder configuration with all MongoDB tool definitions.
+## Demo Data
+
+The seeded dataset includes:
+
+- 70 emission factors
+- 5 benchmark regions
+- 200 deterministic demo records
+- 27 May records covering May 1 to May 27, 2026
+
+See [`docs/demo-data.md`](docs/demo-data.md) for the reset and verification workflow.
+
+## Documentation
+
+- [`docs/agent-orchestration.md`](docs/agent-orchestration.md)
+- [`docs/demo-data.md`](docs/demo-data.md)
+- [`docs/CarbonLens_Development_Plan_v2.1.md`](docs/CarbonLens_Development_Plan_v2.1.md)
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT
